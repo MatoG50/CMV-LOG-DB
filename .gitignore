@@ -1,2 +1,35 @@
-# Created by venv; see https://docs.python.org/3/library/venv.h
-Lib
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Django files
+*.log
+*.pot
+*.pyc
+*.sqlite3
+db.sqlite3
+media/
+staticfiles/
+
+# Environment variables
+.env
+.env.*
+
+# Virtual environment folders
+venv/
+env/
+Lib/
+Include/
+Scripts/
+bin/
+Lib/site-packages/
+
+# IDE/editor settings
+.vscode/
+.idea/
+*.swp
+
+# OS files
+.DS_Store
+Thumbs.db
