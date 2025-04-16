@@ -6,7 +6,9 @@ class Trip(models.Model):
     pickup_location = models.CharField(max_length=200, help_text="Enter the pickup location")
     dropoff_location = models.CharField(max_length=200, help_text="Enter the dropoff location")
     current_cycle_hours = models.FloatField(help_text="Enter the current cycle used (in hours)")
-    total_distance = models.FloatField(help_text="Total distance of the trip in miles")
+    total_distance = models.FloatField(
+    blank=True, null=True, help_text="Total distance of the trip in miles"
+)
 
     # Calculated fields
     worked_hours = models.FloatField(default=0, help_text="Total hours worked by the driver")

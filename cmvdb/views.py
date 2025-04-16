@@ -41,7 +41,7 @@ def trip_detail(request, id):
         trip.delete()
         return JsonResponse({"message": "Trip deleted"}, status=204) 
 
-# Route 
+    
 @api_view(['GET'])
 def trip_route(request, id):
     try:
@@ -49,18 +49,51 @@ def trip_route(request, id):
     except Trip.DoesNotExist:
         return JsonResponse({"error": "Trip not found"}, status=404)
 
-    # start_coords = [trip.start_latitude, trip.start_longitude]
-    # end_coords = [trip.end_latitude, trip.end_longitude]
+    ORS_API_KEY = "5b3ce3597851110001cf6248f28417b551294803bad6ac6d95732a67"
 
-    start_coords = [8.681495,49.41461]
-    end_coords = [8.687872,49.420318]
+    def geocode_location(location):
+        geo_url = f"https://api.openrouteservice.org/geocode/search"
+        params = {
+            "api_key": ORS_API_KEY,
+            "text": location,
+            "size": 1
+        }
+        response = requests.get(geo_url, params=params)
+        if response.status_code == 200:
+            data = response.json()
+            coords = data['features'][0]['geometry']['coordinates'] 
+            return coords
+        else:
+            return None
 
-    ors_url = f"https://api.openrouteservice.org/v2/directions/driving-car?api_key=5b3ce3597851110001cf6248f28417b551294803bad6ac6d95732a67&start={start_coords[0]},{start_coords[1]}&end={end_coords[0]},{end_coords[1]}"
-   
-    response = requests.get(ors_url)
-    
-    if response.status_code == 200:
-        route_info = response.json()
+    pickup_coords = geocode_location(trip.pickup_location)
+    dropoff_coords = geocode_location(trip.dropoff_location)
+
+    if not pickup_coords or not dropoff_coords:
+        return JsonResponse({"error": "Failed to geocode one or both locations"}, status=400)
+
+    # Build route URL
+    directions_url = (
+        f"https://api.openrouteservice.org/v2/directions/driving-car"
+        f"?api_key={ORS_API_KEY}"
+        f"&start={pickup_coords[0]},{pickup_coords[1]}"
+        f"&end={dropoff_coords[0]},{dropoff_coords[1]}"
+    )
+
+    route_response = requests.get(directions_url)
+
+    if route_response.status_code == 200:
+        route_info = route_response.json()
+        distance = route_info['features'][0]['properties']['summary']['distance']
+        total_distance = round(distance / 1609.34, 2)
+        trip.total_distance = total_distance
+        # trip.current_cycle_hours = trip.worked_hours + trip.pickup_dropoff_time
+        trip.current_location = trip.dropoff_location
+        trip.save()
+
+        
+
+        # trip.save()
         return JsonResponse(route_info)
     else:
-        return JsonResponse({"error": "Failed to fetch route information"}, status=response.status_code)
+        return JsonResponse({"error": "Failed to fetch route information"}, status=route_response.status_code)
