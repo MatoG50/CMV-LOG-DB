@@ -18,9 +18,12 @@ from django.contrib import admin
 from django.urls import path
 from cmvdb import views
 
+
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('trips/', views.trip_list),
     path('trips/<int:id>', views.trip_detail),
-    path('trips/<int:id>/route', views.trip_route),  
+    path('trips/<int:id>/route', views.trip_route),
+    path('trip/<int:trip_id>/log/', views.TripLogView.as_view(), name='trip_log_view'),  
 ]
