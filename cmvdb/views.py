@@ -41,7 +41,6 @@ def trip_detail(request, id):
     if request.method == 'DELETE':
         trip.delete()
         return JsonResponse({"message": "Trip deleted"}, status=204) 
-
     
 @api_view(['GET'])
 def trip_route(request, id):
@@ -88,17 +87,16 @@ def trip_route(request, id):
         distance = route_info['features'][0]['properties']['summary']['distance']
         total_distance = round(distance / 1609.34, 2)
         trip.total_distance = total_distance
-        # trip.current_cycle_hours = trip.worked_hours + trip.pickup_dropoff_time
         trip.current_location = trip.dropoff_location
         trip.save()
 
-      # Generate ELD log based on updated trip data
-        log_data = trip.generate_log()
+        # Generate multiple log sheets instead of single log
+        log_sheets = trip.generate_log_sheets()
 
-        # Return route info along with the generated log
         return JsonResponse({
             "route": route_info,
-            "eld_log": log_data
+            "log_sheets": log_sheets,
+            "total_days": len(log_sheets)
         })
     else:
         return JsonResponse({"error": "Failed to fetch route information"}, status=route_response.status_code)
@@ -106,13 +104,19 @@ def trip_route(request, id):
 class TripLogView(View):
     def get(self, request, trip_id):
         try:
-            # Fetch the trip based on the provided trip_id
             trip = Trip.objects.get(pk=trip_id)
         except Trip.DoesNotExist:
             return JsonResponse({"error": "Trip not found"}, status=404)
         
-        # Generate the log using the generate_log method of the Trip model
-        log = trip.generate_log()
+        # Generate log sheets instead of single log
+        log_sheets = trip.generate_log_sheets()  # Using the new method
         
-        # Return the log as a JSON response
-        return JsonResponse({"log": log})
+        # Return the complete set of log sheets
+        return JsonResponse({
+            "trip_id": trip_id,
+            "pickup": trip.pickup_location,
+            "dropoff": trip.dropoff_location,
+            "total_distance": trip.total_distance,
+            "log_sheets": log_sheets,
+            "total_days": len(log_sheets)
+        })

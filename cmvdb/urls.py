@@ -25,5 +25,5 @@ urlpatterns = [
     path('trips/', views.trip_list),
     path('trips/<int:id>', views.trip_detail),
     path('trips/<int:id>/route', views.trip_route),
-    path('trip/<int:trip_id>/log/', views.TripLogView.as_view(), name='trip_log_view'),  
+    path('trips/<int:trip_id>/logs/', views.TripLogView.as_view(), name='trip_log_view'),  
 ]
