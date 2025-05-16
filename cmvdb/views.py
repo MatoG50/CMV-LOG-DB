@@ -72,7 +72,7 @@ def trip_route(request, id):
     if not pickup_coords or not dropoff_coords:
         return JsonResponse({"error": "Failed to geocode one or both locations"}, status=400)
 
-    # Build route URL
+    # route URL
     directions_url = (
         f"https://api.openrouteservice.org/v2/directions/driving-car"
         f"?api_key={ORS_API_KEY}"
@@ -90,7 +90,7 @@ def trip_route(request, id):
         trip.current_location = trip.dropoff_location
         trip.save()
 
-        # Generate multiple log sheets instead of single log
+        # multiple log sheets
         log_sheets = trip.generate_log_sheets()
 
         return JsonResponse({
@@ -108,10 +108,10 @@ class TripLogView(View):
         except Trip.DoesNotExist:
             return JsonResponse({"error": "Trip not found"}, status=404)
         
-        # Generate log sheets instead of single log
-        log_sheets = trip.generate_log_sheets()  # Using the new method
+  
+        log_sheets = trip.generate_log_sheets()  
         
-        # Return the complete set of log sheets
+        # log sheets
         return JsonResponse({
             "trip_id": trip_id,
             "pickup": trip.pickup_location,

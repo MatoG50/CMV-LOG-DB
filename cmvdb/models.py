@@ -27,11 +27,11 @@ class Trip(models.Model):
     def generate_log_sheets(self):
         log_sheets = []
         time = timedelta(hours=0)
-        drive_speed = 60  # mph
+        drive_speed = 60 
         max_drive_hours = 11
-        break_after = 8  # hours driving before 30-min break
-        off_duty_reset = 10  # hours
-        max_on_duty = 14  # max on-duty hours per day
+        break_after = 8  
+        off_duty_reset = 10  
+        max_on_duty = 14  
 
         if not self.total_distance:
             return log_sheets
@@ -43,7 +43,7 @@ class Trip(models.Model):
         day_counter = 1
         remaining_fuel_stops = self.fuel_stops
 
-        # Initialize first day's log
+        # first day's log
         current_day_entries = []
         current_day_start = time
         current_day_drive = 0
@@ -62,7 +62,7 @@ class Trip(models.Model):
         current_day_on_duty += 1
 
         while remaining_drive_hours > 0:
-            # Check for 30-min break requirement
+            # 30-min break requirement
             if current_drive >= break_after:
                 current_day_entries.append({
                     'time': str(time),
@@ -75,9 +75,9 @@ class Trip(models.Model):
                 current_day_on_duty += 0.5
                 current_drive = 0
 
-            # Check for 14-hour on-duty limit
+            # 14-hour on-duty limit
             if current_on_duty >= max_on_duty:
-                # Finalize current day's log
+                # current day's log
                 log_sheets.append(self._create_log_sheet(
                     day_counter,
                     current_day_entries,
@@ -103,7 +103,7 @@ class Trip(models.Model):
                 current_on_duty = 0
                 current_drive = 0
 
-            # Calculate next driving segment
+            # next driving segment
             drive_chunk = min(
                 max_drive_hours - current_drive,
                 max_on_duty - current_on_duty,
@@ -113,7 +113,7 @@ class Trip(models.Model):
             if drive_chunk <= 0:
                 break
 
-            # Add driving segment
+            # driving segment
             progress = 1 - (remaining_drive_hours / total_drive_hours)
             location = f"Route {progress:.1%}"
             current_day_entries.append({
@@ -129,7 +129,7 @@ class Trip(models.Model):
             current_day_drive += drive_chunk
             remaining_drive_hours -= drive_chunk
 
-            # Handle fuel stops
+            # fuel stops
             if (remaining_fuel_stops > 0 and 
                 (total_drive_hours - remaining_drive_hours) >= 
                 (self.fuel_stops - remaining_fuel_stops + 1) * (1000/drive_speed)):
@@ -145,7 +145,7 @@ class Trip(models.Model):
                 current_day_on_duty += 0.25
                 remaining_fuel_stops -= 1
 
-        # Drop-off 1 hour ON
+        # Drop-off 1 hour
         current_day_entries.append({
             'time': str(time),
             'status': 'ON',
@@ -155,7 +155,7 @@ class Trip(models.Model):
         })
         time += timedelta(hours=1)
         
-        # Finalize last day's log
+        # last day's log
         log_sheets.append(self._create_log_sheet(
             day_counter,
             current_day_entries,
@@ -166,7 +166,7 @@ class Trip(models.Model):
         return log_sheets
 
     def _create_log_sheet(self, day, entries, start_time, end_time):
-        """Helper to create a structured log sheet for a day"""
+   
         drive_hours = sum(e['duration'] for e in entries if e['status'] == 'DR')
         on_duty_hours = sum(e['duration'] for e in entries if e['status'] in ('DR', 'ON'))
         off_duty_hours = sum(e['duration'] for e in entries if e['status'] in ('OFF', 'SB'))
