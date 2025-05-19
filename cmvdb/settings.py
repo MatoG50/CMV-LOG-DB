@@ -23,9 +23,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-578pog@&2zl5l5ep-+5s6)5k$yxpm_s0+=fqx*u$jo0v5me@g^'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['cmv-log-db.onrender.com', 'localhost', '127.0.0.1']
 
 
 # Application definition
