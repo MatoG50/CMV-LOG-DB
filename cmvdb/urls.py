@@ -16,12 +16,14 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from django.views.generic.base import RedirectView
 from cmvdb import views
 
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', RedirectView.as_view(url='/admin/')),
     path('trips/', views.trip_list),
     path('trips/<int:id>', views.trip_detail),
     path('trips/<int:id>/route', views.trip_route),

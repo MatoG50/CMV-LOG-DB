@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-578pog@&2zl5l5ep-+5s6)5k$yxpm_s0+=fqx*u$jo0v5me@g^
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['cmv-log-db.onrender.com', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['cmv-log-db.onrender.com', 'localhost', '127.0.0.1'] 
 
 
 # Application definition
