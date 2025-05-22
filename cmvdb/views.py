@@ -1,6 +1,8 @@
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
+
+from cmvdb import settings
 from .models import Trip
 from .serializers import TripSerializer
 from rest_framework.decorators import api_view         
@@ -49,7 +51,7 @@ def trip_route(request, id):
     except Trip.DoesNotExist:
         return JsonResponse({"error": "Trip not found"}, status=404)
 
-    ORS_API_KEY = "5b3ce3597851110001cf6248f28417b551294803bad6ac6d95732a67"
+    ORS_API_KEY = settings.ORS_API_KEY
 
     def geocode_location(location):
         geo_url = f"https://api.openrouteservice.org/geocode/search"
