@@ -20,11 +20,14 @@ load_dotenv()
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 ORS_API_KEY = os.getenv('ORS_API_KEY')
+SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-578pog@&2zl5l5ep-+5s6)5k$yxpm_s0+=fqx*u$jo0v5me@g^'
+
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
